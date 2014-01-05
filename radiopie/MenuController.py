@@ -9,8 +9,11 @@ log = logging.getLogger("radiopie")
 class MenuController:
 	def __init__(self, lcd):
 		self.__position = 0
+		self.__menuposition = -1
 		self.__lcd = lcd
 		self.__modules = RadiopieModule.__subclasses__()
+		self.__module = None
+		self.__terminate = False
 
 	def start(self):
 		log.info("Menu Started ...")
@@ -23,29 +26,42 @@ class MenuController:
 		GPIO.add_event_detect(23, GPIO.RISING, callback=self.left, bouncetime=500)
 		GPIO.add_event_detect(24, GPIO.RISING, callback=self.right, bouncetime=500)
 		GPIO.add_event_detect(22, GPIO.RISING, callback=self.ok)
-		selection = self.showMenu()
-		GPIO.clearnup()
+		self.showMenu()
+		GPIO.cleanup()
 
 	def showMenu(self):
 		log.info(str(len(self.__modules))+" Module/s found")
 		self.__lcd.setFirst("Select..")
-		position = -1
-		while True:
-			if(position != self.__position):
+		while not self.__terminate:
+			if(self.__menuposition != self.__position):
 				self.__lcd.setLast(self.__modules[self.__position].getName())
-				position = self.__position
+				self.__menuposition = self.__position
 			time.sleep(0.4)
 	
 	def left(self, event):
-		self.__position = (self.__position - 1) % len(self.__modules)
 		log.debug("Left Button Pressed")
+		if(self.__module != None and self.__module.isAlive()):
+			self.__module.left()
+		else:
+			self.__terminate = True
 
 	def right(self, event):
-		self.__position = (self.__position + 1) % len(self.__modules) 	
 		log.debug("Right Button Pressed")
+		if(self.__module != None and self.__module.isAlive()):
+			self.__module.right()
+		else:
+			self.__position = (self.__position + 1) % len(self.__modules) 	
 		
 	def ok(self, event):
-		module = self.__modules[self.__position]()
 		log.debug("OK Button Pressed")
-		module.start()
-		time.sleep(3)
+		if(self.__module != None and self.__module.isAlive()):
+			self.__module.ok()
+		else:
+			self.__module = self.__modules[self.__position](self.__lcd)
+			self.__module.start()
+			time.sleep(1)
+			self.__module.join()
+			self.__lcd.setFirst("Select..")
+			self.__menuposition = -1
+		
+
