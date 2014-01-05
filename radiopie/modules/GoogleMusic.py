@@ -30,18 +30,23 @@ class GoogleMusic(RadiopieModule):
 		self._lcd.setLast("Login..")
 		self.__api = Webclient()
 		self.__api.login(self.__user, self.__password)
+		log.info("Loading Library")
+		self._lcd.setLast(" Loading")
 		self.__library = self.__api.get_all_songs()
+		self._lcd.setLast("Ready")
 
 	def playCurrentSong(self):
+		log.info("Playing a song")
 		if(self.__player == None):
 			self.setup()
 		else:
 			self.__player.set_state(gst.STATE_NULL)
-		self.__currentsong = self.library[random.randint(0,self.songs)]
-		self._lcd.setLast(self.__currentsong["title"])
+		self.__currentsong = self.__library[random.randint(0,len(self.__library))]
+		self._lcd.setLast(self.__currentsong["title"].encode("utf-8"))
 		url = self.__api.get_stream_urls(self.__currentsong["id"])
 		self.__player.set_property("uri", url[0])
 		self.__player.set_state(gst.STATE_PLAYING)
+		log.info("Playing song " + self.__currentsong["title"] + " ... ")
 	
 
 	def setup(self):
@@ -51,6 +56,7 @@ class GoogleMusic(RadiopieModule):
 		bus.connect("message", self.on_status)
 
 	def loadConfiguration(self):
+		log.info("Loading settings from json ...")
 		json_data = open('defaults.json')
 		data = json.load(json_data)
 		self.__user = data["google-music-user"]
@@ -62,6 +68,7 @@ class GoogleMusic(RadiopieModule):
 	def on_status(self, bus, message):
 		t = message.type
 		if(t == gst.MESSAGE_EOS):
+			log.info("Song end")
 			self.playCurrentSong()
 		if(t == pygst.MESSAGE_ERROR):
 			err, debug = message.parse_error()
