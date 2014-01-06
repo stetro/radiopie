@@ -20,12 +20,12 @@ class MenuController:
 		self.__lcd.setFirst("Welcome!")
 		time.sleep(3)
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(22, GPIO.IN)
-		GPIO.setup(23, GPIO.IN)
-		GPIO.setup(24, GPIO.IN)
-		GPIO.add_event_detect(23, GPIO.RISING, callback=self.left, bouncetime=500)
-		GPIO.add_event_detect(24, GPIO.RISING, callback=self.right, bouncetime=500)
-		GPIO.add_event_detect(22, GPIO.RISING, callback=self.ok)
+		GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		GPIO.add_event_detect(23, GPIO.FALLING, callback=self.left, bouncetime=200)
+		GPIO.add_event_detect(24, GPIO.FALLING, callback=self.right, bouncetime=200)
+		GPIO.add_event_detect(22, GPIO.FALLING, callback=self.ok, bouncetime=200)
 		self.showMenu()
 		GPIO.cleanup()
 
@@ -36,7 +36,7 @@ class MenuController:
 			if(self.__menuposition != self.__position):
 				self.__lcd.setLast(self.__modules[self.__position].getName())
 				self.__menuposition = self.__position
-			time.sleep(0.4)
+			time.sleep(1)
 	
 	def left(self, event):
 		log.debug("Left Button Pressed")

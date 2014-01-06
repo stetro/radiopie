@@ -23,17 +23,21 @@ class GoogleMusic(RadiopieModule):
 			if(self._ok.isSet()):
 				self._ok.clear()
 				self.playCurrentSong()
+			if(self._left.isSet()):
+				self._left.clear()
+				self._terminate.set()
 			time.sleep(1)
+		self.setdown()
 
 	def googleMusicConnection(self):
 		log.info("Login as user " + self.__user + " ...")
-		self._lcd.setLast("Login..")
+		self._lcd.setLast(" Login..")
 		self.__api = Webclient()
 		self.__api.login(self.__user, self.__password)
 		log.info("Loading Library")
 		self._lcd.setLast(" Loading")
 		self.__library = self.__api.get_all_songs()
-		self._lcd.setLast("Ready")
+		self._lcd.setLast(" Ready")
 
 	def playCurrentSong(self):
 		log.info("Playing a song")
@@ -75,8 +79,7 @@ class GoogleMusic(RadiopieModule):
 			log.error(err)
 			log.debug(debug)
 			self.__player.set_state(gst.STATE_NONE)
-
-
+	
 	@staticmethod
 	def getName():
 		return "Google Music"

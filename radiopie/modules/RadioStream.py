@@ -26,7 +26,9 @@ class RadioStream(RadiopieModule):
 				self._right.clear()
 				self.__position = (self.__position + 1) % len(self.__stations)
 				self._lcd.setLast(self.__stations[self.__position]["name"].encode("utf-8"))
-	
+			if(self._left.isSet()):
+				self._left.clear()
+				self._terminate.set()
 			time.sleep(1)
 		self.setdown()
 

@@ -10,10 +10,10 @@ class RadiopieModule(threading.Thread):
 		self._terminate = threading.Event()
 		self._ok = threading.Event()
 		self._right = threading.Event()
+		self._left = threading.Event()
 		
-
 	def left(self):
-		raise NotImplementedError
+		self._left.set()
 
 	def right(self):
 		self._right.set()
