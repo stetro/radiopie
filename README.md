@@ -11,4 +11,8 @@ The following python libraries need to be installed to run this project:
 * gmusicapi - Inofficial Google Music API
 * gst and pygst - gstreamer plugin
 
+## Scheme
 
+Here my personal setup for this project:
+
+<img src="https://raw.github.com/stetro/radiopie/master/scheme.png" />
