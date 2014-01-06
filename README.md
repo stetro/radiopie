@@ -14,9 +14,9 @@ Python based radioplayer for raspbarrypi to control different GPIO inputs and a 
 
 The following python libraries need to be installed to run this project:
 
-* lcdproc - LCDproc interface
-* gmusicapi - Inofficial Google Music API
-* gst and pygst - gstreamer plugin
+* lcdproc - LCDproc interface and running server on localhost
+* gmusicapi - Inofficial Google Music API by [Simon Weber](https://github.com/simon-weber/Unofficial-Google-Music-API)
+* gst and pygst - gstreamer plugin and with components
 
 ## Scheme
 
